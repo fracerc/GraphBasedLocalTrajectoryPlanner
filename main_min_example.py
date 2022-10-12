@@ -31,20 +31,20 @@ Furthermore, logs and advanced vehicle dynamics are not considered.
 # ----------------------------------------------------------------------------------------------------------------------
 
 # top level path (module directory)
-toppath = os.path.dirname(os.path.realpath(__file__))
+toppath = os.path.dirname(os.path.realpath(__file__)) #PATH WHERE THIS SCRIPT IS LOCATED IN
 sys.path.append(toppath)
 
-track_param = configparser.ConfigParser()
-if not track_param.read(toppath + "/params/driving_task.ini"):
+track_param = configparser.ConfigParser()  #CREATE OBJECT OF CLASS CONFIGPARSER (USED TO INTERACT WITH .INI FILES). USE SIMILAR TO A DICTIONARY
+if not track_param.read(toppath + "/params/driving_task.ini"):   #driving_task.ini only contains the name of the track. IF YOU CANNOT READ IT RAISE AN ERROR
     raise ValueError('Specified online parameter config file does not exist or is empty!')
 
 track_specifier = json.loads(track_param.get('DRIVING_TASK', 'track'))
 
 # define all relevant paths
-path_dict = {'globtraj_input_path': toppath + "/inputs/traj_ltpl_cl/traj_ltpl_cl_" + track_specifier + ".csv",
-             'graph_store_path': toppath + "/inputs/stored_graph.pckl",
-             'ltpl_offline_param_path': toppath + "/params/ltpl_config_offline.ini",
-             'ltpl_online_param_path': toppath + "/params/ltpl_config_online.ini"
+path_dict = {'globtraj_input_path': toppath + "/inputs/traj_ltpl_cl/traj_ltpl_cl_" + track_specifier + ".csv", #PATH TO GLOBAL TRAJECTORY FILE 
+             'graph_store_path': toppath + "/inputs/stored_graph.pckl",    # PATH TO THE PRECOMPUTED GRAPH (ONCE U RUN THE PROGRAM THE LAST MAP IS SAVED)
+             'ltpl_offline_param_path': toppath + "/params/ltpl_config_offline.ini", #PATH TO OFFLINE GRAPH AND VEHICLE PARAMETERS
+             'ltpl_online_param_path': toppath + "/params/ltpl_config_online.ini" #...
              }
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -61,10 +61,10 @@ ltpl_obj.graph_init()
 
 # set start pose based on first point in provided reference-line
 refline = graph_ltpl.imp_global_traj.src.\
-    import_globtraj_csv.import_globtraj_csv(import_path=path_dict['globtraj_input_path'])[0]
-pos_est = refline[0, :]
-heading_est = np.arctan2(np.diff(refline[0:2, 1]), np.diff(refline[0:2, 0])) - np.pi / 2
-vel_est = 0.0
+    import_globtraj_csv.import_globtraj_csv(import_path=path_dict['globtraj_input_path'])[0] # READ GLOBAL TRAJECTORY
+pos_est = refline[0, :] #GET INITIAL X AND Y
+heading_est = np.arctan2(np.diff(refline[0:2, 1]), np.diff(refline[0:2, 0])) - np.pi / 2 #GET INITIAL HEADING
+vel_est = 0.0 #GET INITIAL VELOCITY
 
 # set start pos
 ltpl_obj.set_startpos(pos_est=pos_est,
